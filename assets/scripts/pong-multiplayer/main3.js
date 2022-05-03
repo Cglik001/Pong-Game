@@ -112,53 +112,13 @@ function ballBounce(){
     ball.x += ball.speed;
   }
   ballWallCollision();
-  paddleCollision();
 }
 
 //detect paddle collision
 
-function paddleCollision() {
- if(
-    ball.y + ball.gravity <= playerTwo.y + playerTwo.height &&
-    ball.x + ball.width + ball.speed >= playerTwo.x &&
-    ball.y + ball.gravity > playerTwo.y ||
-    (ball.y + ball.gravity > playerOne.y &&
-    ball.x + ball.speed <= playerOne.x + playerOne.width)
-    ){
-      ball.speed = ball.speed * -1;
-    }
-
-  drawElements();
-}
-
 
 //detect wall collison
 function ballWallCollision(){
-  if(ball.x + ball.speed <= 0 || ball.x + ball.speed + ball.width >= canvas.width){
-    ball.y += ball.gravity
-    ball.speed = ball.speed * -1
-    ball.x += ball.speed;
-  } else {
-    ball.y += ball.gravity;
-    ball.x += ball.speed;
-  }
-  /*if (ball.x + ball.speed < playerOne.x + playerOne.width){
-      console.log("linha 128", ball, playerOne)
-      scoreTwo += 1;
-      ball.speed = ball.speed * -1;
-      ball.x = 100 + ball.speed;
-      ball.y += ball.gravity
-    } else if (ball.x + ball.speed > playerTwo.x + playerTwo.width){
-      scoreOne += 1;
-      ball.speed = ball.speed * -1;
-      ball.x = 100 + ball.speed;
-      ball.y += ball.gravity;
-    }*/
-
-   drawElements();
-}
-
-/*function ballWallCollision(){
   if(
     ball.y + ball.gravity <= playerTwo.y + playerTwo.height &&
     ball.x + ball.width + ball.speed >= playerTwo.x &&
@@ -180,7 +140,7 @@ function ballWallCollision(){
       ball.y += ball.gravity;
     }
   drawElements();
-}*/
+}
 
 //draw elements
 
@@ -227,3 +187,18 @@ const net = {
     ball.y += ball.gravity;
     ball.x += ball.speed;
   }*/
+
+  /*
+
+    if (
+    (
+      (ball.y >= playerOne.y && ball.y >= playerOne.y + playerOne.height)
+      && (ball.x === playerOne.x + playerOne.width)
+      && ball.speed < 0) ||
+    (ball.y >= playerTwo.y &&
+    ball.y >= playerTwo.y + playerTwo.height &&
+    ball.x + ball.width === playerTwo.x && ball.speed > 0)) {
+    console.log("hit")
+    ball.speed = ball.speed * -1;
+  }
+  */

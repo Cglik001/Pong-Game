@@ -4,6 +4,7 @@ canvas.width = 650;
 canvas.height = 400;
 
 const hardBtn = document.getElementById("hardBtn")
+const normalBtn = document.getElementById("normalBtn")
 
 let scoreOne = 0;
 let scoreTwo = 0;
@@ -43,13 +44,20 @@ class Element {
     this.gravity = options.gravity;
   }
 }
-
+// draw net
+const net = {
+  x: canvas.width/2,
+  y: 0,
+  width: 4,
+  height: canvas.height,
+  color: "#ffff",
+}
 //first paddle
 const playerOne = new Element({
   x:10,
-  y:200,
+  y: 155,
   width: 15,
-  height: 80,
+  height: 90,
   color: "#fff",
   gravity: 2,
 })
@@ -58,9 +66,9 @@ const playerOne = new Element({
 
 const playerTwo = new Element({
   x:625,
-  y:200,
+  y:155,
   width: 15,
-  height: 80,
+  height: 90,
   color: "#fff",
   gravity: 2,
 })
@@ -77,21 +85,23 @@ const ball = new Element({
   gravity: 2
 })
 
+
 //player one score text
 
 function displayScoreOne(){
-  context.font = "35px Arial"
+  context.font = "40px Arial Bold"
   context.fillStyle = "#fff"
   context.fillText(scoreOne, canvas.width/2 - 60, 50)
 }
 
+//player two score text
 function displayScoreTwo(){
-  context.font = "35px Arial"
+  context.font = "40px Arial Bold"
   context.fillStyle = "#fff"
   context.fillText(scoreTwo, canvas.width/2 + 60, 50)
 }
 
-//player two score text
+
 
 
 //draw elements
@@ -103,7 +113,7 @@ function drawElement(element){
 
 //make ball bounce
 function ballBounce(){
-  if(ball.y + ball.gravity <= 0 || ball.y + ball.gravity >= canvas.height){
+  if(ball.y + ball.gravity <= 0 || ball.y + ball.gravity + ball.height >= canvas.height ){
     ball.gravity = ball.gravity * -1;
     ball.y += ball.gravity;
     ball.x += ball.speed;
@@ -111,53 +121,101 @@ function ballBounce(){
     ball.y += ball.gravity;
     ball.x += ball.speed;
   }
-  ballWallCollision();
   paddleCollision();
+  ballwallPoints();
 }
 
 //detect paddle collision
 
-function paddleCollision() {
- if(
-    ball.y + ball.gravity <= playerTwo.y + playerTwo.height &&
-    ball.x + ball.width + ball.speed >= playerTwo.x &&
-    ball.y + ball.gravity > playerTwo.y ||
-    (ball.y + ball.gravity > playerOne.y &&
-    ball.x + ball.speed <= playerOne.x + playerOne.width)
-    ){
-      ball.speed = ball.speed * -1;
-    }
+function paddleCollision(){
+  //fazer a bolinha voltar quando bater no paddle
+  if (
+     (
+      (
+        ball.y > playerOne.y
+        && ball.y <= playerOne.y + playerOne.height
+        )
+      && (ball.x === playerOne.x + playerOne.width && ball.speed < 0)) ||
+      (
+        (ball.y > playerTwo.y &&
+         ball.y <= playerTwo.y + playerTwo.height)
+          && (ball.x + ball.width === playerTwo.x && ball.speed > 0))) {
+    console.log("hit")
+    ball.speed = ball.speed * -1;
+  }
 
+
+  //
+ /* if(
+      (
+        (
+          ball.y <= playerTwo.y + playerTwo.height
+          && ball.y > playerTwo.y
+          )
+        && (ball.x + ball.width === playerTwo.x && ball.speed > 0)
+      )
+      ||
+      (
+        (
+          ball.y <= playerOne.y + playerOne.height
+          && ball.y > playerOne.y
+          )
+        && (ball.x === playerOne.x + playerOne.width && ball.speed < 0)
+      )
+    ) {
+      ball.speed = ball.speed * -1;
+    } */
+  //fazer o player 1 pontuar quando bater fora do paddle do player 2
+  //fazer o player 2 pontuar quando bater fora do paddle do player 1
   drawElements();
 }
 
+function resetBallPosition() {
+      ball.speed = ball.speed * -1;
+     // ball.x = 100 + ball.speed;
+     // ball.y += ball.gravity
+      ball.x = (650/2) + ball.speed
+      ball.y = (400/2) + ball.gravity
 
-//detect wall collison
-function ballWallCollision(){
-  if(ball.x + ball.speed <= 0 || ball.x + ball.speed + ball.width >= canvas.width){
-    ball.y += ball.gravity
-    ball.speed = ball.speed * -1
-    ball.x += ball.speed;
-  } else {
-    ball.y += ball.gravity;
-    ball.x += ball.speed;
-  }
-  /*if (ball.x + ball.speed < playerOne.x + playerOne.width){
+}
+
+function resetGame() {
+  let scoreOne = 0;
+  let scoreTwo = 0;
+  playerOne.y = 155;
+  playerTwo.y = 155;
+  resetBallPosition() ;
+}
+
+function enableButtons() {
+  hardBtn.removeAttribute('disabled')
+  normalBtn.removeAttribute('disabled')
+}
+
+function disableButtons() {
+    hardBtn.setAttribute('disabled', true)
+    normalBtn.setAttribute('disabled', true)
+}
+
+
+function ballwallPoints() {
+  paddleCollision()
+  if (ball.x < (playerOne.x - 10)){
       console.log("linha 128", ball, playerOne)
       scoreTwo += 1;
-      ball.speed = ball.speed * -1;
-      ball.x = 100 + ball.speed;
-      ball.y += ball.gravity
-    } else if (ball.x + ball.speed > playerTwo.x + playerTwo.width){
+      resetBallPosition()
+    }
+  else if (ball.x > (playerTwo.x + (ball.width - 5))){
       scoreOne += 1;
-      ball.speed = ball.speed * -1;
-      ball.x = 100 + ball.speed;
-      ball.y += ball.gravity;
-    }*/
+      resetBallPosition()
+    }
+
+
 
    drawElements();
 }
 
+//detect wall collison
 /*function ballWallCollision(){
   if(
     ball.y + ball.gravity <= playerTwo.y + playerTwo.height &&
@@ -191,11 +249,39 @@ function drawElements(){
   drawElement(ball);
   displayScoreOne();
   displayScoreTwo();
+  drawElement(net);
 }
+
+function hardGame(){
+  ball.speed = 4;
+  playerOne.gravity = 6;
+  playerTwo.gravity = 6;
+}
+
+function normalGame() {
+  ball.speed = 1;
+  playerOne.gravity = 2;
+  playerTwo.gravity = 2;
+}
+
+/*function gameWinner() {
+  if(scoreOne === 10) {
+      this.gameWinner = 'player One Wins!'
+  } else if (scoreTwo === 10) {
+       this.gameWinner = 'Player Two Wins!'
+            }
+        }
+
+        return this.gameOver
+    }
+
+}*/
+
 
 
 function loop(){
   ballBounce();
+  paddleCollision();
   window.requestAnimationFrame(loop)
 }
 loop();

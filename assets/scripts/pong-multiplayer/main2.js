@@ -142,7 +142,7 @@ function ballWallCollision(){
     ball.y += ball.gravity;
     ball.x += ball.speed;
   }
-  /*if (ball.x + ball.speed < playerOne.x + playerOne.width){
+  if (ball.x + ball.speed < playerOne.x + playerOne.width){
       console.log("linha 128", ball, playerOne)
       scoreTwo += 1;
       ball.speed = ball.speed * -1;
@@ -153,7 +153,7 @@ function ballWallCollision(){
       ball.speed = ball.speed * -1;
       ball.x = 100 + ball.speed;
       ball.y += ball.gravity;
-    }*/
+    }
 
    drawElements();
 }
